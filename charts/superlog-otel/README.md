@@ -12,7 +12,7 @@ In Porter, open **Add-ons → Create add-on → Helm Chart** and enter:
 | Add-on name | `superlog-otel` |
 | Helm Repository URL | `https://superloglabs.github.io/helm-charts` |
 | Chart Name | `superlog-otel` |
-| Chart Version | `0.1.0` |
+| Chart Version | `0.1.1` |
 
 Paste this into **Values YAML**, replacing the placeholder with the project
 ingest key shown in Superlog:
@@ -31,11 +31,12 @@ Kubernetes cluster UID as its stable identity.
 
 The chart installs two coordinated collector roles in one Helm release:
 
-- A node agent (`DaemonSet`) collects stdout/stderr from every pod, host CPU,
-  memory, disk and network metrics, and kubelet pod/container metrics.
+- A node agent (`DaemonSet`) collects stdout/stderr from every pod on Porter's
+  Application nodes, host CPU, memory, disk and network metrics, and kubelet
+  pod/container metrics.
 - One cluster collector (`Deployment`) collects Kubernetes events and workload
-  state metrics and accepts application OTLP traces, logs, and metrics on ports
-  `4317` and `4318`.
+  state metrics across the cluster and accepts application OTLP traces, logs,
+  and metrics on ports `4317` and `4318`.
 - Both roles attach Kubernetes workload metadata and export directly to the
   selected Superlog project.
 
@@ -48,11 +49,32 @@ objects may contain sensitive environment values and create unnecessary
 telemetry volume. Kubernetes events, resource identity, and operational metrics
 are collected instead.
 
+## Porter node groups
+
+By default, the node agent targets Porter's **Application** node group. This
+keeps a one-click install schedulable on a fresh Porter cluster, where the fixed
+System nodes may already be at their pod limit. Kubernetes events and workload
+state metrics remain cluster-wide because the cluster collector is not a
+DaemonSet.
+
+To collect container logs and node metrics from every Linux node, replace the
+default in Porter's **Values YAML** with the following. Use this only when every
+node has capacity for one additional pod; otherwise Porter can remain in the
+**Deploying** state while an agent waits to schedule.
+
+```yaml
+collectors:
+  agent:
+    porterNodeGroups: []
+```
+
 ## Existing monitoring
 
 [Porter's built-in application metrics](https://docs.porter.run/applications/observability/monitoring)
-use Prometheus, so a standard Porter cluster does not have a competing
-OpenTelemetry Collector. Install the default chart as shown above.
+use a separate monitoring pipeline. It may collect some of the same Kubernetes
+and kubelet metrics for Porter's dashboards, but it does not send application
+container logs, metrics, or traces to Superlog. The default chart can therefore
+be installed alongside Porter's built-in monitoring.
 
 If the cluster's **Add-ons** page shows an OpenTelemetry, Datadog, New Relic,
 Fluent, Promtail, or Vector add-on that already exports the same data to

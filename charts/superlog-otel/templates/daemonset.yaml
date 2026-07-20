@@ -34,6 +34,17 @@ spec:
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      {{- with .Values.collectors.agent.porterNodeGroups }}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: porter.run/workload-kind
+                    operator: In
+                    values:
+                      {{- toYaml . | nindent 22 }}
+      {{- end }}
       containers:
         - name: collector
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"

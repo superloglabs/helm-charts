@@ -52,6 +52,9 @@ render() {
 helm lint "$chart_dir" \
   --set global.superlog.apiKey=sl_public_test >/dev/null
 
+grep -Fxq 'version: 0.1.1' "$chart_dir/Chart.yaml" || \
+  fail "expected chart version 0.1.1"
+
 # Default install owns node collection and one cluster-wide OTLP gateway.
 render
 assert_line "kind: DaemonSet"
@@ -61,6 +64,9 @@ assert_line_count 1 "kind: DaemonSet"
 assert_line_count 1 "kind: Deployment"
 assert_line_count 1 "kind: Service"
 assert_line_count 2 "        kubernetes.io/os: linux"
+assert_contains "key: porter.run/workload-kind"
+assert_contains "operator: In"
+assert_contains "- application"
 assert_contains "name: otlp"
 assert_contains "port: 4317"
 assert_contains "name: otlp-http"
@@ -84,6 +90,11 @@ assert_contains "- persistentvolumeclaims"
 assert_contains "Authorization: Bearer \${env:SUPERLOG_API_KEY}"
 assert_not_contains "x-api-key:"
 assert_contains 'value: "porter-monitoring"'
+
+# Clusters with capacity on every node can opt into full-node collection.
+render --set-json 'collectors.agent.porterNodeGroups=[]'
+assert_not_contains "key: porter.run/workload-kind"
+assert_line_count 2 "        kubernetes.io/os: linux"
 
 # Component suffixes remain distinct even at Kubernetes' 63-character limit.
 long_fullname="$(printf 'a%.0s' {1..63})"

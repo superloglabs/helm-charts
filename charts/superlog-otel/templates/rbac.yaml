@@ -49,6 +49,8 @@ rules:
       - nodes/spec
       - pods
       - pods/status
+      - persistentvolumes
+      - persistentvolumeclaims
       - replicationcontrollers
       - replicationcontrollers/status
       - resourcequotas
@@ -86,4 +88,3 @@ subjects:
     name: {{ include "superlog-otel.componentName" (dict "root" . "component" "cluster") }}
     namespace: {{ .Release.Namespace }}
 {{- end }}
-

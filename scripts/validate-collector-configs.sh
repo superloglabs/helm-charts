@@ -29,9 +29,11 @@ validate() {
 }
 
 validate agent \
+  -e MY_POD_NAME=superlog-otel-agent-test \
   -e MY_POD_IP=127.0.0.1 \
   -e K8S_NODE_IP=127.0.0.1 \
   -e K8S_NODE_NAME=test-node \
+  -e KUBELET_INSECURE_SKIP_VERIFY=true \
   -v "$validation_dir/hostfs:/hostfs:ro" \
   -v "$validation_dir/storage:/var/lib/otelcol" \
   -v "$validation_dir/serviceaccount:/var/run/secrets/kubernetes.io/serviceaccount:ro"

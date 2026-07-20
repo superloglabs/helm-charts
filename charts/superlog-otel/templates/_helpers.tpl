@@ -36,5 +36,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{- define "superlog-otel.componentName" -}}
-{{- printf "%s-%s" (include "superlog-otel.fullname" .root) .component | trunc 63 | trimSuffix "-" }}
+{{- $maxBaseLength := int (sub 62 (len .component)) }}
+{{- $base := include "superlog-otel.fullname" .root | trunc $maxBaseLength | trimSuffix "-" }}
+{{- printf "%s-%s" $base .component }}
 {{- end }}

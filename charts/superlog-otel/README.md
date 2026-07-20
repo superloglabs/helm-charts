@@ -102,6 +102,19 @@ dedicated checkpoint directory is writable. The two roles use separate service
 accounts and least-privilege ClusterRoles. Neither role can read Kubernetes
 Secret or ConfigMap contents.
 
+Kubelet requests authenticate with the collector's service-account token. TLS
+certificate verification is disabled by default because managed-cluster kubelet
+certificates commonly omit the node host IP from their subject alternative
+names. Clusters with compatible kubelet certificates can enable verification in
+Porter's **Values YAML**:
+
+```yaml
+collectors:
+  agent:
+    kubelet:
+      insecureSkipVerify: false
+```
+
 ## Validation
 
 Pull requests render every supported installation shape, lint and package the

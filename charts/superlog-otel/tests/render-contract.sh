@@ -65,12 +65,26 @@ assert_contains "port: 4317"
 assert_contains "name: otlp-http"
 assert_contains "port: 4318"
 assert_contains "filelog:"
+assert_contains "      - \"/var/log/pods/*_\${env:MY_POD_NAME}_*/collector/*.log\""
+assert_contains "name: MY_POD_NAME"
 assert_contains "hostmetrics:"
 assert_contains "kubeletstats:"
+assert_contains "insecure_skip_verify: \${env:KUBELET_INSECURE_SKIP_VERIFY}"
+assert_contains "name: KUBELET_INSECURE_SKIP_VERIFY"
 assert_contains "k8sobjects:"
 assert_contains "k8s_cluster:"
+assert_contains "- persistentvolumes"
+assert_contains "- persistentvolumeclaims"
 assert_contains "x-api-key: \${env:SUPERLOG_API_KEY}"
 assert_contains 'value: "porter-monitoring"'
+
+# Component suffixes remain distinct even at Kubernetes' 63-character limit.
+long_fullname="$(printf 'a%.0s' {1..63})"
+expected_agent_name="${long_fullname:0:57}-agent"
+expected_cluster_name="${long_fullname:0:55}-cluster"
+render --set fullnameOverride="$long_fullname"
+assert_contains "name: $expected_agent_name"
+assert_contains "name: $expected_cluster_name"
 
 # A pre-created Secret avoids writing the ingest key into the rendered release.
 render \

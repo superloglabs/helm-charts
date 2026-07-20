@@ -81,7 +81,8 @@ assert_contains "receivers: [prometheus/internal, hostmetrics, kubeletstats]"
 assert_contains "receivers: [prometheus/internal, otlp, k8s_cluster]"
 assert_contains "- persistentvolumes"
 assert_contains "- persistentvolumeclaims"
-assert_contains "x-api-key: \${env:SUPERLOG_API_KEY}"
+assert_contains "Authorization: Bearer \${env:SUPERLOG_API_KEY}"
+assert_not_contains "x-api-key:"
 assert_contains 'value: "porter-monitoring"'
 
 # Component suffixes remain distinct even at Kubernetes' 63-character limit.

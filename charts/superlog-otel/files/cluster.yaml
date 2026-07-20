@@ -52,7 +52,7 @@ exporters:
   otlp_http/superlog:
     endpoint: ${env:SUPERLOG_ENDPOINT}
     headers:
-      x-api-key: ${env:SUPERLOG_API_KEY}
+      Authorization: Bearer ${env:SUPERLOG_API_KEY}
     compression: gzip
     sending_queue:
       enabled: true

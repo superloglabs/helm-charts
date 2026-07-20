@@ -1,0 +1,13 @@
+apiVersion: v2
+name: superlog-otel
+description: Collect Kubernetes telemetry and export it to Superlog.
+type: application
+version: 0.1.0
+appVersion: "0.156.0"
+home: https://superlog.sh
+sources:
+  - https://github.com/superloglabs/helm-charts
+  - https://github.com/open-telemetry/opentelemetry-helm-charts
+maintainers:
+  - name: Superlog
+    url: https://superlog.sh

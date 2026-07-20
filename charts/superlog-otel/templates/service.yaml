@@ -1,0 +1,24 @@
+{{- if .Values.collectors.cluster.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "superlog-otel.componentName" (dict "root" . "component" "cluster") }}
+  labels:
+    {{- include "superlog-otel.labels" . | nindent 4 }}
+    app.kubernetes.io/component: cluster
+spec:
+  type: ClusterIP
+  selector:
+    {{- include "superlog-otel.selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: cluster
+  ports:
+    - name: otlp
+      port: 4317
+      targetPort: otlp
+      protocol: TCP
+      appProtocol: grpc
+    - name: otlp-http
+      port: 4318
+      targetPort: otlp-http
+      protocol: TCP
+{{- end }}

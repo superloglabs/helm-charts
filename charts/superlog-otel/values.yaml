@@ -1,0 +1,56 @@
+global:
+  superlog:
+    # Optional display name. Defaults to the Porter add-on/release name; the
+    # collector also attaches the cluster UID for stable identity.
+    clusterName: ""
+    endpoint: https://intake.superlog.sh
+
+    # For a quick Porter install, set apiKey in the Values YAML. For production,
+    # existingSecret is preferred because Helm release metadata otherwise retains
+    # the value supplied here.
+    apiKey: ""
+    existingSecret:
+      name: ""
+      key: api-key
+
+collectors:
+  # Disable this when an existing node collector already owns container logs,
+  # host metrics, and kubelet metrics.
+  agent:
+    enabled: true
+    nodeSelector:
+      kubernetes.io/os: linux
+    kubelet:
+      # Managed-cluster kubelet certificates commonly omit the node host IP
+      # from their SANs. Authentication still uses the service-account token.
+      insecureSkipVerify: true
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        memory: 512Mi
+    tolerations:
+      - operator: Exists
+
+  # Disable this when an existing cluster collector already owns Kubernetes
+  # events/cluster metrics and provides an OTLP gateway.
+  cluster:
+    enabled: true
+    nodeSelector:
+      kubernetes.io/os: linux
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        memory: 512Mi
+
+image:
+  repository: ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-k8s
+  tag: "0.156.0"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""

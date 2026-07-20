@@ -69,6 +69,10 @@ spec:
               value: {{ required "global.superlog.endpoint is required" .Values.global.superlog.endpoint | quote }}
             - name: SUPERLOG_CLUSTER_NAME
               value: {{ default .Release.Name .Values.global.superlog.clusterName | quote }}
+            - name: SUPERLOG_COLLECTOR_SERVICE_NAME
+              value: {{ printf "%s-agent" .Chart.Name | quote }}
+            - name: SUPERLOG_CHART_VERSION
+              value: {{ .Chart.Version | quote }}
           livenessProbe:
             httpGet:
               path: /

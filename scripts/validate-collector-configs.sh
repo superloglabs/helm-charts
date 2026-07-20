@@ -24,6 +24,8 @@ validate() {
     -e SUPERLOG_API_KEY=sl_public_test \
     -e SUPERLOG_ENDPOINT=https://intake.superlog.sh \
     -e SUPERLOG_CLUSTER_NAME=test-cluster \
+    -e SUPERLOG_COLLECTOR_SERVICE_NAME=superlog-otel-test \
+    -e SUPERLOG_CHART_VERSION=0.1.0 \
     -v "$chart_dir/files/$config_name.yaml:/conf/relay.yaml:ro" \
     "$collector_image" validate --config=/conf/relay.yaml
 }

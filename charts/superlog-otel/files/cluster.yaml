@@ -16,6 +16,13 @@ receivers:
         mode: watch
         group: events.k8s.io
         exclude_watch_type: [DELETED]
+  prometheus/internal:
+    config:
+      scrape_configs:
+        - job_name: superlog-otel-cluster
+          scrape_interval: 30s
+          static_configs:
+            - targets: ["${env:MY_POD_IP}:8888"]
 processors:
   k8s_attributes:
     passthrough: false
@@ -58,13 +65,25 @@ exporters:
       max_elapsed_time: 5m
 service:
   extensions: [health_check]
+  telemetry:
+    resource:
+      service.name: ${env:SUPERLOG_COLLECTOR_SERVICE_NAME}
+      service.version: ${env:SUPERLOG_CHART_VERSION}
+    metrics:
+      level: detailed
+      readers:
+        - pull:
+            exporter:
+              prometheus:
+                host: ${env:MY_POD_IP}
+                port: 8888
   pipelines:
     logs:
       receivers: [otlp, k8sobjects]
       processors: [memory_limiter, k8s_attributes, resource/superlog, batch]
       exporters: [otlp_http/superlog]
     metrics:
-      receivers: [otlp, k8s_cluster]
+      receivers: [prometheus/internal, otlp, k8s_cluster]
       processors: [memory_limiter, k8s_attributes, resource/superlog, batch]
       exporters: [otlp_http/superlog]
     traces:

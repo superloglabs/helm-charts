@@ -1,0 +1,13 @@
+{{- if .Values.collectors.agent.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "superlog-otel.componentName" (dict "root" . "component" "agent") }}
+  labels:
+    {{- include "superlog-otel.labels" . | nindent 4 }}
+    app.kubernetes.io/component: agent
+data:
+  relay: |
+    {{- .Files.Get "files/agent.yaml" | nindent 4 }}
+{{- end }}
+

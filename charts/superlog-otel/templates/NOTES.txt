@@ -1,0 +1,13 @@
+Superlog Kubernetes telemetry is configured for cluster:
+  {{ default .Release.Name .Values.global.superlog.clusterName }}
+
+{{- if .Values.collectors.cluster.enabled }}
+Application OTLP endpoint (HTTP/protobuf):
+  http://{{ include "superlog-otel.componentName" (dict "root" . "component" "cluster") }}.{{ .Release.Namespace }}.svc:4318
+
+Application OTLP endpoint (gRPC):
+  http://{{ include "superlog-otel.componentName" (dict "root" . "component" "cluster") }}.{{ .Release.Namespace }}.svc:4317
+{{- end }}
+
+Before enabling another node or cluster collector, check for overlapping
+filelog, hostmetrics, kubeletstats, k8sobjects, and k8s_cluster receivers.

@@ -1,0 +1,21 @@
+apiVersion: v1
+entries:
+  superlog-otel:
+  - apiVersion: v2
+    appVersion: 0.156.0
+    created: "2026-07-20T16:40:11.575302646Z"
+    description: Collect Kubernetes telemetry and export it to Superlog.
+    digest: 26733a0d68f0da9d6e982f330beb46bd49cdfb3bc140c4ebac920ccd6d7054a7
+    home: https://superlog.sh
+    maintainers:
+    - name: Superlog
+      url: https://superlog.sh
+    name: superlog-otel
+    sources:
+    - https://github.com/superloglabs/helm-charts
+    - https://github.com/open-telemetry/opentelemetry-helm-charts
+    type: application
+    urls:
+    - https://github.com/superloglabs/helm-charts/releases/download/superlog-otel-0.1.0/superlog-otel-0.1.0.tgz
+    version: 0.1.0
+generated: "2026-07-20T16:40:11.575306982Z"

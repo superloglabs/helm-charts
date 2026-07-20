@@ -18,6 +18,8 @@ collectors:
   # host metrics, and kubelet metrics.
   agent:
     enabled: true
+    nodeSelector:
+      kubernetes.io/os: linux
     kubelet:
       # Managed-cluster kubelet certificates commonly omit the node host IP
       # from their SANs. Authentication still uses the service-account token.
@@ -35,6 +37,8 @@ collectors:
   # events/cluster metrics and provides an OTLP gateway.
   cluster:
     enabled: true
+    nodeSelector:
+      kubernetes.io/os: linux
     resources:
       requests:
         cpu: 100m

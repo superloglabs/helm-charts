@@ -18,6 +18,12 @@ collectors:
   # host metrics, and kubelet metrics.
   agent:
     enabled: true
+    # Porter keeps system, monitoring, and application workloads in separate
+    # node groups. Application-only is the safe zero-config default because a
+    # fresh Porter's fixed system nodes may already be at their pod limit.
+    # Set this to [] only after ensuring every Linux node has a free pod slot.
+    porterNodeGroups:
+      - application
     nodeSelector:
       kubernetes.io/os: linux
     kubelet:
